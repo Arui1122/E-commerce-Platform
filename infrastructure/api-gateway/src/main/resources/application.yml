@@ -76,7 +76,7 @@ spring:
       # 全域 CORS 配置
       globalcors:
         corsConfigurations:
-          '[/**]':
+          "[/**]":
             allowedOriginPatterns: "*"
             allowedMethods:
               - GET
