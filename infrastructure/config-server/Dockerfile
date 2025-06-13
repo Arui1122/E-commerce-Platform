@@ -1,5 +1,5 @@
 # 使用多階段建構來減小鏡像大小
-FROM openjdk:17-jdk-slim AS builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
@@ -7,19 +7,19 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# 安裝 Maven
-RUN apt-get update && apt-get install -y maven
+# 安裝 Maven 和 curl
+RUN apk update && apk add --no-cache maven curl
 
 # 構建應用
 RUN mvn clean package -DskipTests
 
 # 運行階段
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
 # 創建非 root 用戶
-RUN groupadd -r spring && useradd -r -g spring spring
+RUN addgroup -g 1001 spring && adduser -D -s /bin/sh -u 1001 -G spring spring
 
 # 複製構建好的 jar 文件
 COPY --from=builder /app/target/*.jar app.jar

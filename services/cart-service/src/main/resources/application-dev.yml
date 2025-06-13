@@ -1,0 +1,20 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 1
+      timeout: 5000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+# Product Service Configuration for Feign Client
+product-service:
+  url: http://product-service
+
+logging:
+  level:
+    com.ecommerce.cart: DEBUG
