@@ -8,7 +8,7 @@ spring:
       enabled: false
       import-check:
         enabled: false
-    
+
 server:
   port: 8083
 

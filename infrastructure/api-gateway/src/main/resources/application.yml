@@ -41,7 +41,7 @@ spring:
         - id: cart-service
           uri: lb://cart-service
           predicates:
-            - Path=/api/v1/cart/**
+            - Path=/api/v1/carts/**
           filters:
             - StripPrefix=0
             - name: CircuitBreaker
