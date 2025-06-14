@@ -1,4 +1,5 @@
 # Inventory Service Testing Guide
+
 # 庫存服務測試指南
 
 ## 📋 概述
@@ -129,6 +130,7 @@ cd /Users/arui/project/E-commerce-Platform
 - 總請求數量: 200（超過庫存量）
 
 預期結果:
+
 - 成功預留: 10 個請求（總計 100 個商品）
 - 失敗請求: 10 個請求
 - 最終庫存: 總量 100，預留 100，可用 0
@@ -138,10 +140,12 @@ cd /Users/arui/project/E-commerce-Platform
 ### 常見問題
 
 1. **TestContainers 啟動失敗**
+
    - 檢查 Docker 是否運行
    - 檢查端口是否被占用
 
 2. **並發測試不穩定**
+
    - 檢查 Redis 連接
    - 檢查數據庫連接池配置
 

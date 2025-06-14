@@ -231,6 +231,7 @@ ecommerce-platform/
   - [x] 庫存扣減原子操作
 
 - [x] **配置文件**
+
   - [x] application.yml
   - [x] application-dev.yml
   - [x] bootstrap.yml

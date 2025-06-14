@@ -4,3 +4,24 @@ spring:
   cloud:
     config:
       uri: http://config-server:8888
+      # 針對慢網路優化超時設定
+      request-connect-timeout: 60000
+      request-read-timeout: 60000
+      retry:
+        max-attempts: 6
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+
+# Eureka Client 慢網路優化
+eureka:
+  client:
+    registry-fetch-interval-seconds: 30
+    initial-instance-info-replication-interval-seconds: 40
+    instance-info-replication-interval-seconds: 30
+    healthcheck:
+      enabled: true
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    prefer-ip-address: true

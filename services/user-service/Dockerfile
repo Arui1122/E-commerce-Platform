@@ -1,5 +1,5 @@
 # Multi-stage build
-FROM openjdk:17-jdk-slim as build
+FROM openjdk:21-jdk-slim as build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests
 
 # Production stage
-FROM openjdk:17-jre-slim
+FROM openjdk:21-jre-slim
 
 WORKDIR /app
 

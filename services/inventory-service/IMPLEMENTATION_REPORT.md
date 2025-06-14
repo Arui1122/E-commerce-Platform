@@ -9,12 +9,14 @@
 ### 📊 核心功能
 
 - [x] **庫存管理**
+
   - [x] 創建/更新商品庫存
   - [x] 查詢庫存信息
   - [x] 批量查詢庫存
   - [x] 庫存不足商品查詢
 
 - [x] **庫存操作**
+
   - [x] 庫存預留（訂單創建時）
   - [x] 庫存釋放（訂單取消時）
   - [x] 庫存確認（訂單付款時）
@@ -29,18 +31,21 @@
 ### 🏗️ 技術架構
 
 - [x] **微服務架構**
+
   - [x] Spring Boot 3.1
   - [x] Spring Cloud 2022.0
   - [x] Eureka 服務註冊發現
   - [x] Spring Cloud Config 配置中心
 
 - [x] **數據持久化**
+
   - [x] PostgreSQL 數據庫
   - [x] Spring Data JPA
   - [x] Flyway 數據庫遷移
   - [x] 樂觀鎖版本控制
 
 - [x] **緩存與鎖**
+
   - [x] Redis 緩存
   - [x] Redisson 分散式鎖
   - [x] 可配置鎖超時時間
@@ -53,16 +58,19 @@
 ### 🧪 測試覆蓋
 
 - [x] **單元測試**
+
   - [x] 業務邏輯測試 (InventoryServiceTest)
   - [x] 實體類測試 (InventoryTest)
   - [x] Mock 依賴測試
 
 - [x] **集成測試**
+
   - [x] REST API 測試
   - [x] 數據庫集成測試
   - [x] TestContainers 環境
 
 - [x] **併發測試**
+
   - [x] 高併發庫存預留測試
   - [x] 防超賣機制驗證
   - [x] 數據一致性測試
@@ -75,30 +83,32 @@
 
 ## 🚀 API 端點
 
-| 方法 | 端點 | 功能 | 狀態 |
-|------|------|------|------|
-| POST | `/api/v1/inventory` | 創建/更新庫存 | ✅ |
-| GET | `/api/v1/inventory/{productId}` | 查詢庫存 | ✅ |
-| GET | `/api/v1/inventory/check/{productId}` | 檢查庫存 | ✅ |
-| POST | `/api/v1/inventory/reserve` | 預留庫存 | ✅ |
-| POST | `/api/v1/inventory/{productId}/release` | 釋放庫存 | ✅ |
-| POST | `/api/v1/inventory/{productId}/confirm` | 確認庫存 | ✅ |
-| POST | `/api/v1/inventory/{productId}/replenish` | 補充庫存 | ✅ |
-| GET | `/api/v1/inventory/low-stock` | 低庫存商品 | ✅ |
-| POST | `/api/v1/inventory/batch` | 批量查詢 | ✅ |
-| GET | `/api/v1/inventory/health` | 健康檢查 | ✅ |
+| 方法 | 端點                                      | 功能          | 狀態 |
+| ---- | ----------------------------------------- | ------------- | ---- |
+| POST | `/api/v1/inventory`                       | 創建/更新庫存 | ✅   |
+| GET  | `/api/v1/inventory/{productId}`           | 查詢庫存      | ✅   |
+| GET  | `/api/v1/inventory/check/{productId}`     | 檢查庫存      | ✅   |
+| POST | `/api/v1/inventory/reserve`               | 預留庫存      | ✅   |
+| POST | `/api/v1/inventory/{productId}/release`   | 釋放庫存      | ✅   |
+| POST | `/api/v1/inventory/{productId}/confirm`   | 確認庫存      | ✅   |
+| POST | `/api/v1/inventory/{productId}/replenish` | 補充庫存      | ✅   |
+| GET  | `/api/v1/inventory/low-stock`             | 低庫存商品    | ✅   |
+| POST | `/api/v1/inventory/batch`                 | 批量查詢      | ✅   |
+| GET  | `/api/v1/inventory/health`                | 健康檢查      | ✅   |
 
 ## 🔒 防超賣機制
 
 ### 多層防護策略
 
 1. **分散式鎖層**
+
    - 使用 Redisson 實現 Redis 分散式鎖
-   - 鎖超時時間: 30秒
-   - 等待時間: 10秒
+   - 鎖超時時間: 30 秒
+   - 等待時間: 10 秒
    - 確保跨實例的操作串行化
 
 2. **樂觀鎖層**
+
    - JPA `@Version` 註解
    - 數據庫層面的版本控制
    - 併發更新檢測和回滾
@@ -110,10 +120,10 @@
 
 ### 併發測試結果
 
-- ✅ 20個併發請求，每個請求10個商品
-- ✅ 初始庫存100，總請求200（超過庫存）
-- ✅ 結果：10個成功，10個失敗
-- ✅ 最終庫存：總量100，預留100，可用0
+- ✅ 20 個併發請求，每個請求 10 個商品
+- ✅ 初始庫存 100，總請求 200（超過庫存）
+- ✅ 結果：10 個成功，10 個失敗
+- ✅ 最終庫存：總量 100，預留 100，可用 0
 - ✅ 無超賣現象，數據一致性完美
 
 ## 📊 數據模型
@@ -128,7 +138,7 @@ CREATE TABLE inventory (
     reserved_quantity INTEGER NOT NULL DEFAULT 0 CHECK (reserved_quantity >= 0),
     version INTEGER NOT NULL DEFAULT 0,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT chk_available_quantity CHECK (quantity >= reserved_quantity)
 );
 ```
@@ -160,7 +170,7 @@ spring:
       port: 6379
       database: 2
 
-# 數據庫連接池
+  # 數據庫連接池
   datasource:
     hikari:
       maximum-pool-size: 15
@@ -193,8 +203,8 @@ spring:
 
 ### 系統容量
 
-- **數據庫連接池**: 15個連接
-- **Redis 連接**: 8個活躍連接
+- **數據庫連接池**: 15 個連接
+- **Redis 連接**: 8 個活躍連接
 - **JVM 堆內存**: 512MB-1GB
 - **併發處理能力**: 100+ 請求/秒
 
@@ -245,11 +255,13 @@ spring:
 雖然核心功能已完成，但可以考慮以下增強：
 
 1. **性能優化**
+
    - 查詢結果緩存
    - 批量操作優化
    - 數據庫索引調優
 
 2. **功能增強**
+
    - 庫存變更歷史記錄
    - 庫存告警機制
    - 自動補貨建議

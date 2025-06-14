@@ -16,26 +16,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
+        '[format_sql]': true
   data:
     redis:
       # Will be overridden by TestContainers
       host: localhost
       port: 6379
       database: 0
+  cloud:
+    config:
+      enabled: false
 
 # Disable Eureka and Config Server for tests
 eureka:
   client:
     enabled: false
 
-spring:
-  cloud:
-    config:
-      enabled: false
-
 logging:
   level:
-    com.ecommerce.inventory: DEBUG
-    org.springframework.transaction: DEBUG
-    org.hibernate: DEBUG
+    '[com.ecommerce.inventory]': DEBUG
+    '[org.springframework.transaction]': DEBUG
+    '[org.hibernate]': DEBUG

@@ -1,5 +1,5 @@
 # 使用多階段建構來減小鏡像大小
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN apk update && apk add --no-cache maven curl
 RUN mvn clean package -DskipTests
 
 # 運行階段
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 

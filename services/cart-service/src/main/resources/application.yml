@@ -6,8 +6,6 @@ spring:
   cloud:
     config:
       enabled: false
-      import-check:
-        enabled: false
 
 server:
   port: 8083
@@ -34,7 +32,7 @@ eureka:
 
 logging:
   level:
-    com.ecommerce.cart: DEBUG
-    org.springframework.data.redis: DEBUG
+    '[com.ecommerce.cart]': DEBUG
+    '[org.springframework.data.redis]': DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

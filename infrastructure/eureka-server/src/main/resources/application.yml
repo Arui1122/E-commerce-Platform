@@ -9,14 +9,24 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+    # 針對慢網路優化 - 增加超時設定
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    # 針對慢網路優化
+    registry-fetch-interval-seconds: 30
+    initial-instance-info-replication-interval-seconds: 40
+    instance-info-replication-interval-seconds: 30
   server:
-    enable-self-preservation: false
-    eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: true
+    eviction-interval-timer-in-ms: 10000
+    # 針對慢網路優化 - 增加響應時間閾值
+    response-cache-update-interval-ms: 5000
+    response-cache-auto-expiration-in-seconds: 180
 
 management:
   endpoints:
@@ -32,5 +42,5 @@ management:
 
 logging:
   level:
-    com.netflix.eureka: OFF
-    com.netflix.discovery: OFF
+    '[com.netflix.eureka]': OFF
+    '[com.netflix.discovery]': OFF
