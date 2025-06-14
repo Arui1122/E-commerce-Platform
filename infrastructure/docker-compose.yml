@@ -200,6 +200,40 @@ services:
       retries: 5
       start_period: 120s
 
+  # Order Service
+  order-service:
+    build:
+      context: ../services/order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+    ports:
+      - "8084:8084"
+    networks:
+      - ecommerce-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/api/v1/orders/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 120s
+
   # Eureka Server (Service Discovery)
   eureka-server:
     build:
