@@ -1,10 +1,15 @@
 package com.ecommerce.integration.simple;
 
-import com.ecommerce.integration.IntegrationTestApplication;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+
+import com.ecommerce.integration.IntegrationTestApplication;
 
 /**
  * 簡化的集成測試示例
