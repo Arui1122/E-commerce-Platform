@@ -21,14 +21,17 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final RedissonClient redissonClient;
+    private final InventoryEventService inventoryEventService;
     
     private static final String LOCK_PREFIX = "inventory:lock:";
     private static final int LOCK_WAIT_TIME = 10;
     private static final int LOCK_LEASE_TIME = 30;
 
-    public InventoryService(InventoryRepository inventoryRepository, RedissonClient redissonClient) {
+    public InventoryService(InventoryRepository inventoryRepository, RedissonClient redissonClient, 
+                          InventoryEventService inventoryEventService) {
         this.inventoryRepository = inventoryRepository;
         this.redissonClient = redissonClient;
+        this.inventoryEventService = inventoryEventService;
     }
 
     @Transactional
@@ -36,10 +39,20 @@ public class InventoryService {
         Inventory inventory = inventoryRepository.findByProductId(request.getProductId())
                 .orElse(new Inventory());
         
+        Integer previousQuantity = inventory.getQuantity();
         inventory.setProductId(request.getProductId());
         inventory.setQuantity(request.getQuantity());
         
         Inventory savedInventory = inventoryRepository.save(inventory);
+        
+        // Publish inventory updated event
+        inventoryEventService.publishInventoryUpdatedEvent(savedInventory, previousQuantity);
+        
+        // Check for low stock and publish warning if necessary
+        if (savedInventory.getQuantity() <= 10) { // 假設低庫存閾值為10
+            inventoryEventService.publishLowStockEvent(savedInventory, 10);
+        }
+        
         return convertToResponse(savedInventory);
     }
 
@@ -138,8 +151,19 @@ public class InventoryService {
             Inventory inventory = inventoryRepository.findByProductId(productId)
                     .orElseThrow(() -> new InventoryNotFoundException(productId));
             
+            Integer previousQuantity = inventory.getQuantity();
             inventory.confirmReservedStock(quantity);
-            inventoryRepository.save(inventory);
+            Inventory savedInventory = inventoryRepository.save(inventory);
+            
+            // Publish inventory updated event
+            inventoryEventService.publishInventoryUpdatedEvent(savedInventory, previousQuantity);
+            
+            // Check if out of stock
+            if (savedInventory.getAvailableQuantity() <= 0) {
+                inventoryEventService.publishOutOfStockEvent(savedInventory);
+            } else if (savedInventory.getAvailableQuantity() <= 10) { // 低庫存閾值
+                inventoryEventService.publishLowStockEvent(savedInventory, 10);
+            }
             
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -156,8 +180,12 @@ public class InventoryService {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new InventoryNotFoundException(productId));
         
+        Integer previousQuantity = inventory.getQuantity();
         inventory.addStock(quantity);
         Inventory savedInventory = inventoryRepository.save(inventory);
+        
+        // Publish restocked event
+        inventoryEventService.publishRestockedEvent(savedInventory, quantity);
         
         return convertToResponse(savedInventory);
     }

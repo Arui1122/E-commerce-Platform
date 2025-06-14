@@ -26,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserEventService userEventService;
 
     public UserResponse registerUser(UserRegistrationRequest request) {
         log.info("Registering user with username: {}", request.getUsername());
@@ -54,6 +55,9 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
+
+        // Publish user registered event
+        userEventService.publishUserRegisteredEvent(savedUser);
 
         return mapToUserResponse(savedUser);
     }
@@ -110,6 +114,9 @@ public class UserService {
 
         User updatedUser = userRepository.save(user);
         log.info("User updated successfully with ID: {}", updatedUser.getId());
+
+        // Publish user profile updated event
+        userEventService.publishUserProfileUpdatedEvent(updatedUser);
 
         return mapToUserResponse(updatedUser);
     }

@@ -1,0 +1,120 @@
+package com.ecommerce.events;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
+
+public class UserEvent {
+    
+    @JsonProperty("eventType")
+    private String eventType;
+    
+    @JsonProperty("userId")
+    private Long userId;
+    
+    @JsonProperty("username")
+    private String username;
+    
+    @JsonProperty("email")
+    private String email;
+    
+    @JsonProperty("firstName")
+    private String firstName;
+    
+    @JsonProperty("lastName")
+    private String lastName;
+    
+    @JsonProperty("phone")
+    private String phone;
+    
+    @JsonProperty("timestamp")
+    private LocalDateTime timestamp;
+    
+    // Constructors
+    public UserEvent() {
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    public UserEvent(String eventType, Long userId, String username, String email) {
+        this();
+        this.eventType = eventType;
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+    }
+    
+    // Getters and Setters
+    public String getEventType() {
+        return eventType;
+    }
+    
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+    
+    public Long getUserId() {
+        return userId;
+    }
+    
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+    
+    @Override
+    public String toString() {
+        return "UserEvent{" +
+                "eventType='" + eventType + '\'' +
+                ", userId=" + userId +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
+}
