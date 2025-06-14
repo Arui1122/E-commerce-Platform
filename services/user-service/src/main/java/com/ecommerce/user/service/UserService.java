@@ -1,13 +1,5 @@
 package com.ecommerce.user.service;
 
-import com.ecommerce.user.dto.*;
-import com.ecommerce.user.entity.User;
-import com.ecommerce.user.exception.UserAlreadyExistsException;
-import com.ecommerce.user.exception.UserNotFoundException;
-import com.ecommerce.user.repository.UserRepository;
-import com.ecommerce.user.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +7,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.ecommerce.user.dto.JwtAuthenticationResponse;
+import com.ecommerce.user.dto.LoginRequest;
+import com.ecommerce.user.dto.UserRegistrationRequest;
+import com.ecommerce.user.dto.UserResponse;
+import com.ecommerce.user.dto.UserUpdateRequest;
+import com.ecommerce.user.entity.User;
+import com.ecommerce.user.exception.UserAlreadyExistsException;
+import com.ecommerce.user.exception.UserNotFoundException;
+import com.ecommerce.user.repository.UserRepository;
+import com.ecommerce.user.security.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor

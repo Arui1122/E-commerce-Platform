@@ -1,12 +1,14 @@
 package com.ecommerce.user.service.impl;
 
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
 import com.ecommerce.events.UserEvent;
 import com.ecommerce.user.entity.User;
 import com.ecommerce.user.service.UserEventService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service

@@ -1,7 +1,8 @@
 package com.ecommerce.events;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserEvent {
     

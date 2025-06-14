@@ -241,7 +241,7 @@ ecommerce-platform/
   - [x] 並發測試
   - [x] 業務邏輯測試
 
-### 2.5 Order Service (訂單服務)
+### 2.5 Order Service (訂單服務) ✅
 
 - [x] **項目設置**
 
@@ -409,6 +409,7 @@ ecommerce-platform/
   - [x] order.cancelled 主題 - 訂單取消事件
 
 - [x] **消息處理**
+
   - [x] JSON 消息序列化配置
   - [x] Producer 配置 (acks=-1, idempotence=true)
   - [x] Consumer 配置和消費者組
@@ -416,11 +417,13 @@ ecommerce-platform/
   - [x] 實時消息處理驗證
 
 - [x] **Kafka 基礎設施**
+
   - [x] Docker Compose Kafka + ZooKeeper 配置
   - [x] 服務網絡連接配置
   - [x] 健康檢查機制
 
 - [x] **管理工具**
+
   - [x] 主題管理腳本 (scripts/manage-kafka-topics.sh)
   - [x] 批量主題創建功能
   - [x] 消息監聽和發送工具
@@ -430,20 +433,29 @@ ecommerce-platform/
   - [x] 消息發佈測試通過
   - [x] 消息消費測試通過
   - [x] 端到端消息流測試
-  - [x] 性能基準測試 (10條消息 < 500ms)
+  - [x] 性能基準測試 (10 條消息 < 500ms)
 
 ### 3.4 集成測試
 
-- [ ] **測試環境搭建**
+- [x] **測試環境搭建**
 
-  - [ ] TestContainers 配置
-  - [ ] 集成測試基類
-  - [ ] 測試數據準備
+  - [x] TestContainers 配置
+  - [x] 集成測試基類
+  - [x] 測試數據準備
 
-- [ ] **端到端測試**
-  - [ ] 用戶註冊到下單完整流程
-  - [ ] 異常場景測試
-  - [ ] 性能基準測試
+- [x] **端到端測試**
+  - [x] 用戶註冊到下單完整流程
+  - [x] 異常場景測試
+  - [x] 性能基準測試
+
+- [x] **測試實現**
+  - [x] BaseIntegrationTest 基類
+  - [x] TestDataBuilder 測試數據構建工具
+  - [x] E2EIntegrationTest 端到端測試
+  - [x] PerformanceIntegrationTest 性能測試
+  - [x] ExceptionScenarioIntegrationTest 異常場景測試
+  - [x] 集成測試執行腳本
+  - [x] 測試文檔和配置
 
 ---
 
@@ -702,80 +714,6 @@ ecommerce-platform/
 
 ---
 
-## 更新記錄 📝
-
-### 2025-06-15
-
-- ✅ 完成 Phase 3.3 Kafka 消息系統
-  - 12個業務主題創建和管理
-  - 庫存服務 Kafka Producer 集成
-  - 消息發佈和消費功能驗證
-  - Kafka 管理工具腳本開發
-  - 完整測試流程和報告
-  - Docker Compose Kafka 基礎設施配置
-
-### 2025-06-14
-
-- ✅ 完成 Phase 3.1 服務間通信實現
-  - OpenFeign 客戶端集成
-  - Resilience4j 熔斷器配置
-  - 服務間 API 調用實現
-  - Fallback 降級處理
-  - 負載均衡配置
-  - 集成測試腳本
-
-### 2024-12-14
-
-- ✅ 完成 Phase 2.6 Notification Service
-  - Kafka 消息消費
-  - 郵件發送功能
-  - 模板引擎集成
-  - MailDev 測試環境
-
-### 2024-12-13
-
-- ✅ 完成 Phase 2.5 Order Service
-  - 訂單管理 CRUD
-  - Kafka 事件發布
-  - 訂單狀態管理
-  - 支付處理
-
-### 2024-12-12
-
-- ✅ 完成 Phase 2.4 Inventory Service
-  - 庫存管理功能
-  - Redis 分散式鎖
-  - 防超賣機制
-  - 並發測試
-
-### 2024-12-11
-
-- ✅ 完成 Phase 2.3 Cart Service
-  - 購物車基礎功能
-  - Redis 快取集成
-
-### 2024-12-10
-
-- ✅ 完成 Phase 2.2 Product Service
-  - 商品管理 CRUD
-  - 分類管理
-  - 搜索功能
-  - Redis 快取
-
-### 2024-12-09
-
-- ✅ 完成 Phase 2.1 User Service
-  - 用戶註冊登入
-  - JWT 認證
-  - Spring Security 集成
-
-### 2024-12-08
-
-- ✅ 完成 Phase 1 基礎設施
-  - Docker Compose 架構
-  - Eureka 服務註冊
-  - Config Server 配置中心
-  - API Gateway 路由
 - [ ] 確保每個階段都有可運行的版本
 - [ ] 重視測試，特別是集成測試
 - [ ] 文檔要跟上代碼進度
