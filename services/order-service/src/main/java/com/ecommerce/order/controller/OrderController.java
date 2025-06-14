@@ -1,28 +1,39 @@
 package com.ecommerce.order.controller;
 
-import com.ecommerce.order.dto.CreateOrderRequest;
-import com.ecommerce.order.dto.OrderResponse;
-import com.ecommerce.order.entity.Order;
-import com.ecommerce.order.service.OrderService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.ecommerce.order.dto.CreateOrderRequest;
+import com.ecommerce.order.dto.OrderResponse;
+import com.ecommerce.order.entity.Order;
+import com.ecommerce.order.service.OrderService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Order Management", description = "APIs for managing orders")
 public class OrderController {
     
@@ -114,5 +125,36 @@ public class OrderController {
     @Operation(summary = "Health check", description = "Check if the order service is running")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("Order Service is running");
+    }
+    
+    @PostMapping("/saga")
+    @Operation(summary = "使用 Saga 模式創建訂單", description = "使用分散式交易 Saga 模式創建訂單，確保資料一致性")
+    public ResponseEntity<Map<String, Object>> createOrderWithSaga(@Valid @RequestBody CreateOrderRequest request) {
+        try {
+            orderService.createOrderWithSaga(request)
+                    .thenAccept(orderResponse -> {
+                        // 異步處理成功
+                        log.info("Saga 訂單創建成功: 訂單號={}", orderResponse.getOrderNumber());
+                    })
+                    .exceptionally(throwable -> {
+                        // 異步處理失敗
+                        log.error("Saga 訂單創建失敗: {}", throwable.getMessage());
+                        return null;
+                    });
+            
+            // 立即返回接受狀態
+            Map<String, Object> response = Map.of(
+                    "message", "訂單創建請求已接受，正在處理中",
+                    "status", "ACCEPTED"
+            );
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+            
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = Map.of(
+                    "message", "訂單創建失敗: " + e.getMessage(),
+                    "status", "FAILED"
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }

@@ -9,4 +9,6 @@ public interface OrderEventService {
     void sendOrderStatusUpdatedEvent(Order order, Order.OrderStatus oldStatus, Order.OrderStatus newStatus);
     
     void sendPaymentProcessedEvent(Order order);
+    
+    void sendOrderCancelledEvent(Order order, String reason);
 }

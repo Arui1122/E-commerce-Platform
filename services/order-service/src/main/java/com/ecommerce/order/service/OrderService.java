@@ -1,16 +1,20 @@
 package com.ecommerce.order.service;
 
-import com.ecommerce.order.dto.CreateOrderRequest;
-import com.ecommerce.order.dto.OrderResponse;
-import com.ecommerce.order.entity.Order;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import com.ecommerce.order.dto.CreateOrderRequest;
+import com.ecommerce.order.dto.OrderResponse;
+import com.ecommerce.order.entity.Order;
 
 public interface OrderService {
     
     OrderResponse createOrder(CreateOrderRequest request);
+    
+    CompletableFuture<OrderResponse> createOrderWithSaga(CreateOrderRequest request);
     
     OrderResponse getOrderById(Long id);
     

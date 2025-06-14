@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.entity.Order;
 import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.repository.OrderRepository;
+import com.ecommerce.order.saga.service.OrderSagaService;
 import com.ecommerce.order.service.OrderEventService;
 import com.ecommerce.order.service.OrderService;
 
@@ -35,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
     
     private final OrderRepository orderRepository;
     private final OrderEventService orderEventService;
+    private final OrderSagaService orderSagaService;
     
     // Feign clients for inter-service communication
     private final InventoryClient inventoryClient;
@@ -259,6 +262,12 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public CompletableFuture<OrderResponse> createOrderWithSaga(CreateOrderRequest request) {
+        log.info("使用 Saga 模式創建訂單: 使用者ID={}", request.getUserId());
+        return orderSagaService.createOrderWithSaga(request);
     }
     
     private String generateOrderNumber() {
