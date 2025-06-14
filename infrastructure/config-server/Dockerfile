@@ -18,6 +18,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# 安裝 curl 用於健康檢查
+RUN apk update && apk add --no-cache curl
+
 # 創建非 root 用戶
 RUN addgroup -g 1001 spring && adduser -D -s /bin/sh -u 1001 -G spring spring
 
