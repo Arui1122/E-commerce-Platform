@@ -6,8 +6,8 @@ spring:
   mail:
     host: localhost
     port: 1025
-    username: 
-    password: 
+    username:
+    password:
     properties:
       mail:
         smtp:
@@ -15,7 +15,7 @@ spring:
           starttls:
             enable: false
         debug: true
-  
+
   # Kafka configuration
   kafka:
     bootstrap-servers: localhost:9092
@@ -30,7 +30,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-# Logging configuration  
+# Logging configuration
 logging:
   level:
     com.ecommerce.notification: DEBUG

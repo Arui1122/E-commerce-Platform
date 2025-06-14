@@ -299,6 +299,7 @@ ecommerce-platform/
   - [x] 模板引擎集成
 
 - [x] **Kafka 集成**
+
   - [x] 訂單事件 Consumer
   - [x] 庫存預警 Consumer
   - [x] 用戶事件 Consumer
@@ -336,20 +337,38 @@ ecommerce-platform/
 
 ---
 
-## Phase 3: 服務集成與測試 🔧
+## Phase 3: 服務集成與測試 🔧 (進行中)
 
-### 3.1 服務間通信
+### 3.1 服務間通信 ✅
 
-- [ ] **OpenFeign 集成**
+- [x] **OpenFeign 集成**
 
-  - [ ] 配置 Feign 客戶端
-  - [ ] 服務間 API 調用
-  - [ ] 熔斷器配置 (Resilience4j)
-  - [ ] 重試機制
+  - [x] 配置 Feign 客戶端
+  - [x] 服務間 API 調用
+  - [x] 熔斷器配置 (Resilience4j)
+  - [x] 重試機制
+  - [x] Fallback 降級處理
 
-- [ ] **負載均衡**
-  - [ ] Spring Cloud LoadBalancer 配置
-  - [ ] 多實例部署測試
+- [x] **負載均衡**
+  - [x] Spring Cloud LoadBalancer 配置
+  - [x] 服務發現集成
+
+- [x] **Order Service Feign 客戶端**
+  - [x] InventoryClient - 庫存服務調用
+  - [x] CartClient - 購物車服務調用
+  - [x] UserClient - 用戶服務調用
+  - [x] ProductClient - 商品服務調用
+
+- [x] **配置與監控**
+  - [x] FeignConfig 全域配置
+  - [x] 超時和重試配置
+  - [x] Actuator 端點集成
+  - [x] 熔斷器狀態監控
+
+- [x] **測試腳本**
+  - [x] 服務間通信測試腳本
+  - [x] 健康檢查驗證
+  - [x] 端到端集成測試
 
 ### 3.2 分散式事務
 
@@ -636,6 +655,67 @@ ecommerce-platform/
 ### 常見陷阱
 
 - [ ] 不要一開始就追求完美，先 MVP 再迭代
+- [ ] 服務拆分不要過細，避免分散式複雜性
+- [ ] 注意事務邊界，合理設計補償機制
+
+---
+
+## 更新記錄 📝
+
+### 2025-06-14
+- ✅ 完成 Phase 3.1 服務間通信實現
+  - OpenFeign 客戶端集成
+  - Resilience4j 熔斷器配置
+  - 服務間 API 調用實現
+  - Fallback 降級處理
+  - 負載均衡配置
+  - 集成測試腳本
+
+### 2024-12-14
+- ✅ 完成 Phase 2.6 Notification Service
+  - Kafka 消息消費
+  - 郵件發送功能
+  - 模板引擎集成
+  - MailDev 測試環境
+
+### 2024-12-13
+- ✅ 完成 Phase 2.5 Order Service
+  - 訂單管理 CRUD
+  - Kafka 事件發布
+  - 訂單狀態管理
+  - 支付處理
+
+### 2024-12-12
+- ✅ 完成 Phase 2.4 Inventory Service
+  - 庫存管理功能
+  - Redis 分散式鎖
+  - 防超賣機制
+  - 並發測試
+
+### 2024-12-11
+- ✅ 完成 Phase 2.3 Cart Service
+  - 購物車基礎功能
+  - Redis 快取集成
+
+### 2024-12-10
+- ✅ 完成 Phase 2.2 Product Service
+  - 商品管理 CRUD
+  - 分類管理
+  - 搜索功能
+  - Redis 快取
+
+### 2024-12-09
+- ✅ 完成 Phase 2.1 User Service
+  - 用戶註冊登入
+  - JWT 認證
+  - Spring Security 集成
+
+### 2024-12-08
+- ✅ 完成 Phase 1 基礎設施
+  - Docker Compose 架構
+  - Eureka 服務註冊
+  - Config Server 配置中心
+  - API Gateway 路由
 - [ ] 確保每個階段都有可運行的版本
 - [ ] 重視測試，特別是集成測試
 - [ ] 文檔要跟上代碼進度

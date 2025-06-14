@@ -1,5 +1,9 @@
 package com.ecommerce.order.service.impl;
 
+import com.ecommerce.order.client.InventoryClient;
+import com.ecommerce.order.client.CartClient;
+import com.ecommerce.order.client.UserClient;
+import com.ecommerce.order.client.ProductClient;
 import com.ecommerce.order.dto.CreateOrderRequest;
 import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.entity.Order;
@@ -18,6 +22,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,43 +34,147 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderEventService orderEventService;
     
+    // Feign clients for inter-service communication
+    private final InventoryClient inventoryClient;
+    private final CartClient cartClient;
+    private final UserClient userClient;
+    private final ProductClient productClient;
+    
     @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
         log.info("Creating order for user: {}", request.getUserId());
         
-        // Generate order number
-        String orderNumber = generateOrderNumber();
-        
-        // Calculate total amount
-        BigDecimal totalAmount = calculateTotalAmount(request.getOrderItems());
-        
-        // Create order entity
-        Order order = Order.builder()
-                .orderNumber(orderNumber)
-                .userId(request.getUserId())
-                .totalAmount(totalAmount)
-                .status(Order.OrderStatus.PENDING)
-                .shippingAddress(request.getShippingAddress())
-                .paymentMethod(request.getPaymentMethod())
-                .notes(request.getNotes())
-                .build();
-        
-        // Create order items
-        List<OrderItem> orderItems = request.getOrderItems().stream()
-                .map(item -> createOrderItem(item, order))
-                .collect(Collectors.toList());
-        
-        order.setOrderItems(orderItems);
-        
-        // Save order
-        Order savedOrder = orderRepository.save(order);
-        
-        // Send order created event
-        orderEventService.sendOrderCreatedEvent(savedOrder);
-        
-        log.info("Order created successfully: {}", orderNumber);
-        return convertToResponse(savedOrder);
+        try {
+            // 1. 驗證用戶是否存在
+            validateUser(request.getUserId());
+            
+            // 2. 檢查並預留庫存
+            reserveInventoryForOrder(request);
+            
+            // 3. 生成訂單號
+            String orderNumber = generateOrderNumber();
+            
+            // 4. 計算總金額
+            BigDecimal totalAmount = calculateTotalAmount(request.getOrderItems());
+            
+            // 5. 創建訂單實體
+            Order order = Order.builder()
+                    .orderNumber(orderNumber)
+                    .userId(request.getUserId())
+                    .totalAmount(totalAmount)
+                    .status(Order.OrderStatus.PENDING)
+                    .shippingAddress(request.getShippingAddress())
+                    .paymentMethod(request.getPaymentMethod())
+                    .notes(request.getNotes())
+                    .build();
+            
+            // 6. 創建訂單明細
+            List<OrderItem> orderItems = request.getOrderItems().stream()
+                    .map(item -> createOrderItem(item, order))
+                    .collect(Collectors.toList());
+            
+            order.setOrderItems(orderItems);
+            
+            // 7. 保存訂單
+            Order savedOrder = orderRepository.save(order);
+            
+            // 8. 清空購物車（如果訂單來自購物車）
+            if (request.isClearCart()) {
+                clearUserCart(request.getUserId());
+            }
+            
+            // 9. 發送訂單創建事件
+            orderEventService.sendOrderCreatedEvent(savedOrder);
+            
+            log.info("Order created successfully: {}", orderNumber);
+            return convertToResponse(savedOrder);
+            
+        } catch (Exception e) {
+            log.error("Failed to create order for user: {}", request.getUserId(), e);
+            // 釋放已預留的庫存
+            releaseInventoryForOrder(request);
+            throw new RuntimeException("Failed to create order: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * 驗證用戶是否存在
+     */
+    private void validateUser(Long userId) {
+        try {
+            var response = userClient.getUserById(userId);
+            if (response == null || !response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("User not found or invalid: " + userId);
+            }
+            log.info("User validation successful for user: {}", userId);
+        } catch (Exception e) {
+            log.error("Failed to validate user: {}", userId, e);
+            throw new RuntimeException("User validation failed: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * 為訂單預留庫存
+     */
+    private void reserveInventoryForOrder(CreateOrderRequest request) {
+        for (var item : request.getOrderItems()) {
+            try {
+                // 檢查庫存是否充足
+                var stockCheckResponse = inventoryClient.checkStock(item.getProductId(), item.getQuantity());
+                if (!stockCheckResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new RuntimeException("Insufficient stock for product: " + item.getProductId());
+                }
+                
+                // 預留庫存
+                Map<String, Object> reservationRequest = new HashMap<>();
+                reservationRequest.put("productId", item.getProductId());
+                reservationRequest.put("quantity", item.getQuantity());
+                reservationRequest.put("referenceId", "ORDER_" + System.currentTimeMillis());
+                
+                var reserveResponse = inventoryClient.reserveStock(reservationRequest);
+                if (reserveResponse == null || !reserveResponse.getStatusCode().is2xxSuccessful()) {
+                    throw new RuntimeException("Failed to reserve stock for product: " + item.getProductId());
+                }
+                
+                log.info("Stock reserved for product: {}, quantity: {}", item.getProductId(), item.getQuantity());
+                
+            } catch (Exception e) {
+                log.error("Failed to reserve inventory for product: {}", item.getProductId(), e);
+                throw new RuntimeException("Inventory reservation failed: " + e.getMessage(), e);
+            }
+        }
+    }
+    
+    /**
+     * 釋放訂單的預留庫存
+     */
+    private void releaseInventoryForOrder(CreateOrderRequest request) {
+        for (var item : request.getOrderItems()) {
+            try {
+                inventoryClient.releaseReservedStock(item.getProductId(), item.getQuantity());
+                log.info("Released stock for product: {}, quantity: {}", item.getProductId(), item.getQuantity());
+            } catch (Exception e) {
+                log.error("Failed to release stock for product: {}", item.getProductId(), e);
+            }
+        }
+    }
+    
+    /**
+     * 清空用戶購物車
+     */
+    private void clearUserCart(Long userId) {
+        try {
+            var response = cartClient.clearCart(userId);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Cart cleared for user: {}", userId);
+            } else {
+                log.warn("Failed to clear cart for user: {}", userId);
+            }
+        } catch (Exception e) {
+            log.error("Error clearing cart for user: {}", userId, e);
+            // 不拋出異常，因為這不是關鍵操作
+        }
     }
     
     @Override

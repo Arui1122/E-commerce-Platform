@@ -331,8 +331,8 @@ services:
     image: maildev/maildev
     container_name: ecommerce-maildev
     ports:
-      - "1080:1080"  # Web interface
-      - "1025:1025"  # SMTP server
+      - "1080:1080" # Web interface
+      - "1025:1025" # SMTP server
     networks:
       - ecommerce-network
 

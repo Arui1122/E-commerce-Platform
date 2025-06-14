@@ -39,6 +39,10 @@ public class CreateOrderRequest {
     @Size(max = 1000, message = "Notes cannot exceed 1000 characters")
     private String notes;
     
+    // 是否清空購物車
+    @Builder.Default
+    private boolean clearCart = false;
+    
     @Data
     @Builder
     @NoArgsConstructor

@@ -7,6 +7,7 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
 ## 技術架構
 
 ### 技術棧
+
 - **Spring Boot 3.2.0** - 微服務框架
 - **Spring Cloud** - 微服務治理
 - **Spring Mail** - 郵件發送
@@ -16,6 +17,7 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
 - **MailDev** - 郵件測試工具
 
 ### 服務端口
+
 - **8086** - Notification Service REST API
 
 ## 核心功能
@@ -23,7 +25,9 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
 ### 1. 郵件通知功能
 
 #### 支持的郵件類型
+
 - **訂單相關通知**
+
   - 訂單創建確認 (order-created)
   - 訂單支付確認 (order-confirmed)
   - 訂單發貨通知 (order-shipped)
@@ -31,6 +35,7 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
   - 訂單取消通知 (order-cancelled)
 
 - **庫存預警通知**
+
   - 庫存不足警告 (inventory-low)
   - 庫存耗盡警告 (inventory-out-of-stock)
   - 庫存補充通知 (inventory-restocked)
@@ -41,7 +46,9 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
   - 個人資料更新 (profile-updated)
 
 #### 郵件模板
+
 所有郵件使用 Thymeleaf 模板引擎，支援動態內容替換：
+
 - 響應式 HTML 設計
 - 品牌一致的視覺風格
 - 支援變數和條件邏輯
@@ -49,6 +56,7 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
 ### 2. Kafka 消息監聽
 
 #### 監聽的主題 (Topics)
+
 - `order.created` - 訂單創建事件
 - `order.confirmed` - 訂單確認事件
 - `order.shipped` - 訂單發貨事件
@@ -64,6 +72,7 @@ Notification Service 是 E-commerce Platform 的通知服務，負責處理系�
 ### 3. REST API
 
 #### 端點
+
 - `POST /api/v1/notifications/send` - 發送通知消息
 - `POST /api/v1/notifications/send-email` - 發送郵件通知
 - `GET /api/v1/notifications/health` - 健康檢查
@@ -113,26 +122,28 @@ notification-service/
 ## 配置說明
 
 ### application-dev.yml 主要配置
+
 ```yaml
 server:
   port: 8086
 
 spring:
   mail:
-    host: maildev  # 開發環境使用 MailDev
+    host: maildev # 開發環境使用 MailDev
     port: 1025
-    
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service
-      
+
 notification:
   email:
     from: noreply@ecommerce.com
 ```
 
 ### Docker 配置
+
 - 使用 MailDev 作為開發環境的 SMTP 服務器
 - Web 界面端口：1080
 - SMTP 端口：1025
@@ -140,7 +151,9 @@ notification:
 ## 部署說明
 
 ### Docker Compose 配置
+
 已整合到主 docker-compose.yml 文件中：
+
 ```yaml
 notification-service:
   build: ../services/notification-service
@@ -152,30 +165,36 @@ notification-service:
 ```
 
 ### 健康檢查
+
 - 端點：`/actuator/health`
-- 間隔：60秒
-- 超時：30秒
+- 間隔：60 秒
+- 超時：30 秒
 
 ## 測試
 
 ### API 測試
+
 使用提供的測試腳本：
+
 ```bash
 ./test-api.sh
 ```
 
 ### 郵件查看
+
 開發環境中發送的郵件可在 MailDev Web 界面查看：
 http://localhost:1080
 
 ## 監控與運維
 
 ### 健康檢查
+
 - Spring Boot Actuator 端點
 - Prometheus 指標收集
 - Docker 容器健康檢查
 
 ### 日誌
+
 - 結構化日誌輸出
 - Kafka 消息處理日誌
 - 郵件發送狀態日誌
@@ -183,12 +202,14 @@ http://localhost:1080
 ## 擴展功能規劃
 
 ### 短期計劃
+
 - [ ] SMS 通知支援
 - [ ] 推送通知支援
 - [ ] 郵件模板管理界面
 - [ ] 通知歷史記錄
 
 ### 長期計劃
+
 - [ ] 通知規則引擎
 - [ ] A/B 測試支援
 - [ ] 多語言郵件模板
@@ -197,11 +218,14 @@ http://localhost:1080
 ## 故障排除
 
 ### 常見問題
+
 1. **郵件發送失敗**
+
    - 檢查 SMTP 配置
    - 確認 MailDev 服務運行正常
 
 2. **Kafka 消息接收失敗**
+
    - 檢查 Kafka 連接配置
    - 確認主題是否存在
 
@@ -210,6 +234,7 @@ http://localhost:1080
    - 確認變數名稱正確
 
 ### 日誌查看
+
 ```bash
 docker logs notification-service
 ```

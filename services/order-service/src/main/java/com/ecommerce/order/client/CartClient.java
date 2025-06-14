@@ -1,16 +1,38 @@
 package com.ecommerce.order.client;
 
+import com.ecommerce.order.client.fallback.CartClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@FeignClient(name = "cart-service")
+/**
+ * Cart Service Feign Client
+ * 用於調用購物車服務的 API
+ */
+@FeignClient(
+    name = "cart-service",
+    path = "/api/v1/carts",
+    fallback = CartClientFallback.class
+)
 public interface CartClient {
-    
-    @GetMapping("/api/v1/cart/{userId}")
-    Map<String, Object> getCartItems(@PathVariable("userId") Long userId);
-    
-    @DeleteMapping("/api/v1/cart/{userId}/clear")
-    Map<String, Object> clearCart(@PathVariable("userId") Long userId);
+
+    /**
+     * 獲取用戶購物車
+     */
+    @GetMapping("/{userId}")
+    ResponseEntity<Map<String, Object>> getCart(@PathVariable("userId") Long userId);
+
+    /**
+     * 清空用戶購物車
+     */
+    @DeleteMapping("/{userId}")
+    ResponseEntity<Map<String, String>> clearCart(@PathVariable("userId") Long userId);
+
+    /**
+     * 獲取購物車商品數量
+     */
+    @GetMapping("/{userId}/count")
+    ResponseEntity<Map<String, Object>> getCartItemCount(@PathVariable("userId") Long userId);
 }
