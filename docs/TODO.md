@@ -278,24 +278,61 @@ ecommerce-platform/
   - [x] 訂單流程測試
   - [x] 異常情況測試
 
-### 2.6 Notification Service (通知服務)
+### 2.6 Notification Service (通知服務) ✅
 
-- [ ] **項目基礎**
+- [x] **項目基礎**
 
-  - [ ] 創建 notification-service 項目
-  - [ ] Kafka Consumer 配置
-  - [ ] 郵件服務配置
+  - [x] 創建 notification-service 項目
+  - [x] Kafka Consumer 配置
+  - [x] 郵件服務配置
+  - [x] Maven 依賴配置
+  - [x] Dockerfile 創建
+  - [x] Docker Compose 集成
 
-- [ ] **通知功能**
+- [x] **通知功能**
 
-  - [ ] 訂單狀態變更通知
-  - [ ] 郵件模板設計
-  - [ ] 異步消息處理
+  - [x] 訂單狀態變更通知
+  - [x] 郵件模板設計 (HTML + Thymeleaf)
+  - [x] 異步消息處理
+  - [x] 通知服務實現
+  - [x] 郵件發送功能
+  - [x] 模板引擎集成
 
-- [ ] **Kafka 集成**
-  - [ ] 訂單事件 Consumer
-  - [ ] 庫存預警 Consumer
-  - [ ] 消息重試機制
+- [x] **Kafka 集成**
+  - [x] 訂單事件 Consumer
+  - [x] 庫存預警 Consumer
+  - [x] 用戶事件 Consumer
+  - [x] 消息重試機制
+  - [x] 消費者組配置
+
+- [x] **REST API**
+
+  - [x] 通知發送 API
+  - [x] 郵件發送 API
+  - [x] 健康檢查 API
+  - [x] Swagger 文檔集成
+
+- [x] **郵件模板**
+
+  - [x] 訂單確認模板
+  - [x] 訂單狀態更新模板
+  - [x] 歡迎郵件模板
+  - [x] 庫存預警模板
+  - [x] 響應式 HTML 設計
+
+- [x] **配置文件**
+
+  - [x] application.yml
+  - [x] application-dev.yml
+  - [x] bootstrap.yml
+  - [x] Kafka 配置
+  - [x] SMTP 配置
+
+- [x] **測試與部署**
+  - [x] API 測試腳本
+  - [x] MailDev 集成
+  - [x] Docker 構建配置
+  - [x] 服務註冊配置
 
 ---
 

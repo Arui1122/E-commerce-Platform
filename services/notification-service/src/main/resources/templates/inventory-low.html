@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Stock Alert</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #ffc107; color: #212529; padding: 20px; text-align: center; }
+        .content { padding: 20px; background-color: #f8f9fa; }
+        .alert-box { background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .product-info { background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .warning { color: #856404; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Low Stock Alert</h1>
+        </div>
+        
+        <div class="content">
+            <div class="alert-box">
+                <h2 class="warning">Inventory Alert</h2>
+                <p>The following product has reached low stock levels and needs attention:</p>
+            </div>
+            
+            <div class="product-info">
+                <h3>Product Information</h3>
+                <p><strong>Product Name:</strong> <span th:text="${productName}">Product Name</span></p>
+                <p><strong>Product ID:</strong> <span th:text="${productId}">12345</span></p>
+                <p><strong>Current Quantity:</strong> <span class="warning" th:text="${currentQuantity}">5</span></p>
+                <p><strong>Low Stock Threshold:</strong> <span th:text="${threshold}">10</span></p>
+            </div>
+            
+            <div class="alert-box">
+                <h3>Action Required</h3>
+                <p>Please consider restocking this product to avoid running out of inventory.</p>
+                <ul>
+                    <li>Review sales trends for this product</li>
+                    <li>Contact suppliers for restocking</li>
+                    <li>Update product availability if necessary</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated alert from E-commerce Platform Inventory Management System</p>
+            <p>© 2025 E-commerce Platform. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
