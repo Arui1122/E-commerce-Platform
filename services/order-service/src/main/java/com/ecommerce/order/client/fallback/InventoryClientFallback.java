@@ -1,12 +1,14 @@
 package com.ecommerce.order.client.fallback;
 
-import com.ecommerce.order.client.InventoryClient;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+import com.ecommerce.order.client.InventoryClient;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Inventory Service Fallback

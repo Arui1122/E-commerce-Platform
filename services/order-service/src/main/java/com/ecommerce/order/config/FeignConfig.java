@@ -1,11 +1,12 @@
 package com.ecommerce.order.config;
 
-import feign.Logger;
-import feign.Request;
-import feign.Retryer;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import feign.Logger;
+import feign.Request;
+import feign.Retryer;
 
 /**
  * Feign 客戶端配置
