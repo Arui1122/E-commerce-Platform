@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# E-commerce Platform - Prometheus 監控系統啟動和測試腳本
-# 一鍵啟動監控系統並進行全面測試
+# E-commerce Platform - 完整監控系統啟動腳本
+# 啟動 Prometheus + Grafana 監控系統並進行全面測試
 
 set -e
 
@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 DOCKER_COMPOSE_FILE="$PROJECT_ROOT/infrastructure/docker-compose.yml"
-WAIT_TIME=30
+WAIT_TIME=45
 
 # 顏色定義
 RED='\033[0;31m'
@@ -209,6 +209,83 @@ test_prometheus_config() {
     return 0
 }
 
+# 測試 Grafana 配置
+test_grafana_config() {
+    echo "📊 Testing Grafana configuration..."
+    
+    # 檢查 Grafana 是否可訪問
+    local max_attempts=30
+    local attempt=1
+    
+    echo "  Waiting for Grafana to be ready..."
+    while [[ $attempt -le $max_attempts ]]; do
+        if curl -s -f "http://localhost:3000/api/health" > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ Grafana is accessible${NC}"
+            break
+        else
+            echo "  Attempt $attempt/$max_attempts: Waiting for Grafana..."
+            sleep 2
+            ((attempt++))
+        fi
+    done
+    
+    if [[ $attempt -gt $max_attempts ]]; then
+        echo -e "${RED}❌ Grafana health check failed${NC}"
+        return 1
+    fi
+    
+    # 測試 Grafana API
+    local auth="admin:admin"
+    
+    # 檢查數據源
+    local datasources_response=$(curl -s -u "$auth" "http://localhost:3000/api/datasources")
+    local datasources_count=$(echo "$datasources_response" | jq -r 'length' 2>/dev/null || echo "0")
+    
+    if [[ "$datasources_count" -gt 0 ]]; then
+        echo -e "${GREEN}✅ Grafana datasources configured: $datasources_count${NC}"
+        
+        # 檢查 Prometheus 數據源
+        local prometheus_ds=$(echo "$datasources_response" | jq -r '.[] | select(.type=="prometheus") | .name' 2>/dev/null || echo "")
+        if [[ -n "$prometheus_ds" ]]; then
+            echo -e "${GREEN}✅ Prometheus datasource found: $prometheus_ds${NC}"
+        else
+            echo -e "${YELLOW}⚠ Prometheus datasource not found${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠ No datasources found in Grafana${NC}"
+    fi
+    
+    # 檢查儀表板
+    local dashboards_response=$(curl -s -u "$auth" "http://localhost:3000/api/search")
+    local dashboards_count=$(echo "$dashboards_response" | jq -r 'length' 2>/dev/null || echo "0")
+    
+    if [[ "$dashboards_count" -gt 0 ]]; then
+        echo -e "${GREEN}✅ Grafana dashboards loaded: $dashboards_count${NC}"
+        
+        # 列出儀表板
+        echo "  Available dashboards:"
+        echo "$dashboards_response" | jq -r '.[] | "    - \(.title)"' 2>/dev/null || echo "    - Error parsing dashboard list"
+    else
+        echo -e "${YELLOW}⚠ No dashboards found in Grafana${NC}"
+    fi
+    
+    # 測試數據源連接
+    if [[ "$datasources_count" -gt 0 ]]; then
+        echo "  Testing datasource connections..."
+        local ds_id=$(echo "$datasources_response" | jq -r '.[0].id' 2>/dev/null)
+        if [[ -n "$ds_id" && "$ds_id" != "null" ]]; then
+            local test_result=$(curl -s -u "$auth" "http://localhost:3000/api/datasources/$ds_id/health" | jq -r '.status' 2>/dev/null || echo "error")
+            if [[ "$test_result" == "OK" ]]; then
+                echo -e "${GREEN}✅ Datasource connection test passed${NC}"
+            else
+                echo -e "${YELLOW}⚠ Datasource connection test: $test_result${NC}"
+            fi
+        fi
+    fi
+    
+    return 0
+}
+
 # 運行監控測試
 run_monitoring_tests() {
     echo "🧪 Running monitoring tests..."
@@ -286,6 +363,15 @@ main() {
         run_monitoring_tests
     else
         echo -e "${YELLOW}⚠️  Prometheus configuration issues detected${NC}"
+        echo "  Please check the configuration and try again."
+    fi
+    
+    # 測試 Grafana
+    if test_grafana_config; then
+        echo ""
+        run_monitoring_tests
+    else
+        echo -e "${YELLOW}⚠️  Grafana configuration issues detected${NC}"
         echo "  Please check the configuration and try again."
     fi
     

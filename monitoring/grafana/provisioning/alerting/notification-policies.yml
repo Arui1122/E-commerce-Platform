@@ -1,0 +1,29 @@
+apiVersion: 1
+
+notifiers:
+  - name: email-alerts
+    type: email
+    uid: email-notifier
+    org_id: 1
+    is_default: true
+    send_reminder: true
+    disable_resolve_message: false
+    frequency: "10s"
+    settings:
+      addresses: "admin@ecommerce-platform.com"
+      subject: "[Grafana Alert] E-commerce Platform Alert"
+      
+  - name: slack-alerts
+    type: slack
+    uid: slack-notifier
+    org_id: 1
+    is_default: false
+    send_reminder: true
+    disable_resolve_message: false
+    frequency: "10s"
+    settings:
+      url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      channel: "#alerts"
+      username: "Grafana"
+      title: "E-commerce Platform Alert"
+      text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"

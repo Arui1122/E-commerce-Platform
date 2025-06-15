@@ -1,0 +1,127 @@
+apiVersion: 1
+
+groups:
+  - name: ecommerce-alerts
+    orgId: 1
+    folder: E-commerce Platform
+    interval: 1m
+    rules:
+      - uid: service-down-alert
+        title: Service Down Alert
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up == 0
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} has been down for more than 1 minute"
+        labels:
+          severity: critical
+          
+      - uid: high-error-rate-alert
+        title: High Error Rate Alert
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (sum(rate(http_server_requests_seconds_count{status=~"4..|5.."}[5m])) by (job) / sum(rate(http_server_requests_seconds_count[5m])) by (job)) * 100 > 5
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 2m
+        annotations:
+          summary: "High error rate detected for {{ $labels.job }}"
+          description: "Error rate for {{ $labels.job }} is {{ $value }}% which is above 5%"
+        labels:
+          severity: warning
+          
+      - uid: high-response-time-alert
+        title: High Response Time Alert
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, job)) > 1
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 3m
+        annotations:
+          summary: "High response time detected for {{ $labels.job }}"
+          description: "95th percentile response time for {{ $labels.job }} is {{ $value }}s which is above 1s"
+        labels:
+          severity: warning
+          
+      - uid: high-memory-usage-alert
+        title: High Memory Usage Alert
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 80
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: "High memory usage detected for {{ $labels.job }}"
+          description: "JVM heap memory usage for {{ $labels.job }} is {{ $value }}% which is above 80%"
+        labels:
+          severity: warning
+          
+      - uid: database-connection-pool-alert
+        title: Database Connection Pool Alert
+        condition: A
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (hikaricp_connections_active / hikaricp_connections_max) * 100 > 80
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 2m
+        annotations:
+          summary: "Database connection pool usage high for {{ $labels.job }}"
+          description: "Database connection pool usage for {{ $labels.job }} is {{ $value }}% which is above 80%"
+        labels:
+          severity: warning
