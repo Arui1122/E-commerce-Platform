@@ -501,6 +501,7 @@ ecommerce-platform/
   - [x] 健康檢查配置
 
 - [x] **儀表板設計**
+
   - [x] 系統概覽儀表板 (System Overview)
   - [x] 服務詳細監控面板 (Service Details)
   - [x] 業務指標面板 (Business Metrics)
@@ -510,6 +511,7 @@ ecommerce-platform/
   - [x] 變量和過濾器配置
 
 - [x] **告警規則配置**
+
   - [x] 服務下線告警
   - [x] 高錯誤率告警
   - [x] 高響應時間告警
