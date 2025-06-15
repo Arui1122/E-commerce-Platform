@@ -342,13 +342,24 @@ services:
       retries: 5
       start_period: 120s
 
-  # MailDev for email testing
+  # MailDev for Email Testing
   maildev:
-    image: maildev/maildev
-    container_name: ecommerce-maildev
+    image: maildev/maildev:2.0.5
+    container_name: maildev
     ports:
-      - "1080:1080" # Web interface
-      - "1025:1025" # SMTP server
+      - "1080:1080"   # Web界面
+      - "1025:1025"   # SMTP端口
+    networks:
+      - ecommerce-network
+
+  # Zipkin for Distributed Tracing
+  zipkin:
+    image: openzipkin/zipkin:2.24
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=mem
     networks:
       - ecommerce-network
 
