@@ -2,9 +2,16 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+# 告警規則文件
 rule_files:
-  # - "first_rules.yml"
-  # - "second_rules.yml"
+  - "alert-rules.yml"
+
+# 告警管理配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
 
 scrape_configs:
   # Prometheus 自身監控

@@ -22,8 +22,8 @@ spring:
                 fallbackUri: forward:/fallback/users
             - name: RequestRateLimiter
               args:
-                '[redis-rate-limiter.replenishRate]': 10
-                '[redis-rate-limiter.burstCapacity]': 20
+                "[redis-rate-limiter.replenishRate]": 10
+                "[redis-rate-limiter.burstCapacity]": 20
 
         # Product Service 路由
         - id: product-service
@@ -128,14 +128,22 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info,metrics,prometheus,gateway
   endpoint:
     health:
       show-details: always
     gateway:
       enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 logging:
   level:
-    '[org.springframework.cloud.gateway]': DEBUG
-    '[com.ecommerce.gateway]': DEBUG
+    "[org.springframework.cloud.gateway]": DEBUG
+    "[com.ecommerce.gateway]": DEBUG

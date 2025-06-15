@@ -96,6 +96,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
+        <!-- Monitoring -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

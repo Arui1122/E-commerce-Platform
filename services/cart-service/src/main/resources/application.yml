@@ -18,6 +18,14 @@ management:
   endpoint:
     health:
       show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 eureka:
   client:
@@ -32,7 +40,7 @@ eureka:
 
 logging:
   level:
-    '[com.ecommerce.cart]': DEBUG
-    '[org.springframework.data.redis]': DEBUG
+    "[com.ecommerce.cart]": DEBUG
+    "[org.springframework.data.redis]": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

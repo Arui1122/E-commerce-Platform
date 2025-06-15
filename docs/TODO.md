@@ -444,6 +444,7 @@ ecommerce-platform/
   - [x] 測試數據準備
 
 - [x] **端到端測試**
+
   - [x] 用戶註冊到下單完整流程
   - [x] 異常場景測試
   - [x] 性能基準測試
@@ -461,24 +462,32 @@ ecommerce-platform/
 
 ## Phase 4: 監控與運維 📊
 
-### 4.1 Prometheus 監控
+### 4.1 Prometheus 監控 ✅
 
-- [ ] **Prometheus 配置**
+- [x] **Prometheus 配置**
 
-  - [ ] Prometheus 服務配置
-  - [ ] 目標發現配置
-  - [ ] 指標收集規則
+  - [x] Prometheus 服務配置
+  - [x] 目標發現配置
+  - [x] 指標收集規則
+  - [x] 告警規則配置
 
-- [ ] **Spring Boot Actuator**
+- [x] **Spring Boot Actuator**
 
-  - [ ] 各服務 Actuator 配置
-  - [ ] 自定義業務指標
-  - [ ] 健康檢查端點
+  - [x] 各服務 Actuator 配置
+  - [x] 自定義業務指標
+  - [x] 健康檢查端點
 
-- [ ] **Micrometer 集成**
-  - [ ] JVM 指標收集
-  - [ ] HTTP 請求指標
-  - [ ] 數據庫連接池指標
+- [x] **Micrometer 集成**
+
+  - [x] JVM 指標收集
+  - [x] HTTP 請求指標
+  - [x] 數據庫連接池指標
+  - [x] 自定義業務指標（用戶註冊、訂單、庫存等）
+
+- [x] **監控腳本**
+  - [x] 監控系統健康檢查腳本
+  - [x] Prometheus 指標測試腳本
+  - [x] 一鍵啟動監控系統腳本
 
 ### 4.2 Grafana 視覺化
 
